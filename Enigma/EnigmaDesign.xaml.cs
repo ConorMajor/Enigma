@@ -25,7 +25,12 @@ namespace Enigma
         {
             this.KeyDown += new KeyEventHandler(Window_KeyDown);
             this.KeyUp += new KeyEventHandler(Window_KeyUp);
+            
             InitializeComponent();
+            RotorLeft = rnd.Next(26);
+            RotorRight = rnd.Next(26);
+            RotorCentre = rnd.Next(26);
+            DataContext = this;
         }
 
 
@@ -34,10 +39,7 @@ namespace Enigma
         {
             char currentCharacter = pressed;
             //TODO Encrypt
-            if (plugboardConnections.ContainsKey(currentCharacter))
-            {
-                currentCharacter = plugboardConnections[currentCharacter];
-            }
+
 
 
             currentCharacter = Encrypt(currentCharacter);
@@ -48,9 +50,138 @@ namespace Enigma
 
         private char Encrypt(char currentCharacter)
         {
+            if (plugboardConnections.ContainsKey(currentCharacter))
+            {
+                currentCharacter = plugboardConnections[currentCharacter];
+            }
+
+            RotorPass(ref currentCharacter, RotorTypes[RRName], RotorRight);
+            RotorPass(ref currentCharacter, RotorTypes[RCName], RotorCentre);
+            RotorPass(ref currentCharacter, RotorTypes[RLName], RotorLeft);
+            RotorPass(ref currentCharacter, RotorTypes[RLName], RotorLeft);
+            RotorPass(ref currentCharacter, RotorTypes[RCName], RotorCentre);
+            RotorPass(ref currentCharacter, RotorTypes[RRName], RotorRight);
+
+            RotorRightUp(null, null);
+
+
+            if (plugboardConnections.ContainsKey(currentCharacter))
+            {
+                currentCharacter = plugboardConnections[currentCharacter];
+            }
+
             return currentCharacter;
         }
 
+        private void RotorPass(ref char currentCharacter, string rotorType, int rotorIndex)
+        {
+            char[] letters = rotorType.ToArray();
+            int i = Array.IndexOf(letters, currentCharacter);
+            Array.Reverse(letters,0, rotorIndex);
+            Array.Reverse(letters, rotorIndex, letters.Length - rotorIndex);
+            Array.Reverse(letters, 0, letters.Length - 1);
+
+            char[] indexedletters = letters;
+            
+            currentCharacter = indexedletters[i];
+        }
+
+
+        #region Rotors
+
+        
+
+        public int RLName { get; set; } = 1;
+        public int RCName { get; set; } = 1;
+        public int RRName { get; set; } = 1;
+
+        List<string> RotorTypes = new List<string>() {
+
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        ,"HTBZEVAFYROSUGPNLQMJCKWXID"
+        ,"ZHKVMGRSBIEPJYWOANTXDFQLUC"
+        ,"ZGFJYVRDCUSPIHWEXQNOMLKTBA"
+        ,"YTZSGUKCINRWAEXQDHJMOPVBFL"
+        ,"AWLYXNDKGZPRITMVCJBEFQOSHU"
+        ,"IYKENXLGHRVJPZQASTCBDOMWFU"
+        ,"JTIFGOLEMANVWYCKDUZRQBHXSP"
+        ,"RSPAYBMILQHGWNFZCOUTKEDVXJ"
+        ,"OYKBFDICWZLHSPREVMAGUNXQJT"
+        };
+
+        public int RotorLeft { get; set; } = 1;
+        public int RotorCentre { get; set; } = 1;
+        public int RotorRight { get; set; } = 1;
+
+        private void RotorLeftDown(object sender, RoutedEventArgs e)
+        {
+            RotorLeft = RotorLeft - 1;
+            if (RotorLeft < 1)
+            {
+                RotorLeft = 26;
+            }
+
+            RotorL.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorCentreDown(object sender, RoutedEventArgs e)
+        {
+            RotorCentre = RotorCentre - 1;
+            if (RotorCentre < 1)
+            {
+                RotorCentre = 26;
+                RotorLeftDown(null, null);
+            }
+
+            RotorC.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorRightDown(object sender, RoutedEventArgs e)
+        {
+            RotorRight = RotorRight - 1;
+            if (RotorRight < 1)
+            {
+                RotorRight = 26;
+                RotorCentreDown(null, null);
+            }
+            RotorR.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorLeftUp(object sender, RoutedEventArgs e)
+        {
+            RotorLeft = RotorLeft + 1;
+            if (RotorLeft > 26)
+            {
+                RotorLeft = 1;
+            }
+            RotorL.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorCentreUp(object sender, RoutedEventArgs e)
+        {
+            RotorCentre = RotorCentre + 1;
+            if (RotorCentre > 26)
+            {
+                RotorCentre = 1;
+                RotorLeftUp(null, null);
+            }
+            RotorC.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorRightUp(object sender, RoutedEventArgs e)
+        {
+            RotorRight = RotorRight + 1;
+            if (RotorRight > 26)
+            {
+                RotorRight = 1;
+                RotorCentreUp(null, null);
+            }
+            RotorR.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        
+
+        #endregion
 
         #region Output
         private void DisplayCharacter(char pressed, MainWindow window)
@@ -92,6 +223,7 @@ namespace Enigma
 
                 MainWindow window = (MainWindow)sender;
                 string letter = e.Key.ToString();
+            
 
             if (window.ActiveTab.SelectedIndex == 0)
             {
@@ -112,8 +244,15 @@ namespace Enigma
 
                 foreach (Button b in keyboard.Children)
                 {
+
                     if (b.Content.ToString()[0] == pressed)
                     {
+                        SolidColorBrush c = (SolidColorBrush)b.Foreground;
+                        if(Colors.Black == c.Color)
+                        {
+                            return;
+                        }
+
                         b.Foreground = new SolidColorBrush(Colors.Black);
                         Ellipse ellipse = (Ellipse)b.Template.FindName("ellipse", b);
                         ellipse.Fill = new SolidColorBrush(Colors.White);
@@ -252,7 +391,41 @@ namespace Enigma
             }
         }
 
+
+
         #endregion
+
+
+        private void RotorLeftTypeChange(object sender, RoutedEventArgs e)
+        {
+            RLName = RLName + 1;
+            if(RLName > RotorTypes.Count)
+            {
+                RLName = 1;
+            }
+
+            RLButton.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorCentreTypeChange(object sender, RoutedEventArgs e)
+        {
+            RCName = RCName + 1;
+            if (RCName > RotorTypes.Count)
+            {
+                RCName = 1;
+            }
+            RCButton.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
+
+        private void RotorRightTypeChange(object sender, RoutedEventArgs e)
+        {
+            RRName = RRName + 1;
+            if (RRName > RotorTypes.Count)
+            {
+                RRName = 1;
+            }
+            RRButton.GetBindingExpression(Button.ContentProperty).UpdateTarget();
+        }
     }
 
 }

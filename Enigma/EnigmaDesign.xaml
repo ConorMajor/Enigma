@@ -299,10 +299,6 @@
                     </Button>
                 </Grid>
                 <Grid Margin="10,10,10,450" Name="Output" Background="Beige">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="159*"/>
-                        <ColumnDefinition Width="1387*"/>
-                    </Grid.ColumnDefinitions>
                     <Button FontSize="64" Width="100" Height="100" Content="Q" Foreground="Black" Margin="144,22,1143,233" Grid.Column="1">
                         <Button.Template>
                             <ControlTemplate TargetType="{x:Type Button}">
@@ -884,7 +880,47 @@
 
         </TabItem>
         <TabItem Header="Rotors">
-
+            <Grid>
+                <Button Name="RotorL"  FontSize="64" Width="100" Height="100" Content="{Binding Path=RotorLeft}" Foreground="Black" Margin="400,315,1066,400">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Name="ellipse" Stroke="Black"  Fill="Tan"/>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Name="RotorC" FontSize="64" Width="100" Height="100" Content="{Binding Path=RotorCentre}"  Foreground="Black" Margin="700,315,766,400">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Name="ellipse" Stroke="Black"  Fill="Tan"/>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button Name="RotorR" FontSize="64" Width="100" Height="100" Content="{Binding Path=RotorRight}"  Foreground="Black" Margin="1000,315,466,400">
+                    <Button.Template>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Grid>
+                                <Ellipse Name="ellipse" Stroke="Black"  Fill="Tan"/>
+                                <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="5" Width="100" Height="100" Margin="400,175,1066,540" Click="RotorLeftUp"/>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="5" Width="100" Height="100" Margin="700,175,766,540" Click="RotorCentreUp"/>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="5" Width="100" Height="100" Margin="1000,175,466,540" Click="RotorRightUp"/>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="6" Width="100" Height="100" Margin="400,455,1066,260" Click="RotorLeftDown"/>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="6" Width="100" Height="100" Margin="700,455,766,260" Click="RotorCentreDown"/>
+                <Button FontFamily="Marlett" FontSize="100" Foreground="White" Background="Black" Content="6" Width="100" Height="100" Margin="1000,455,466,260" Click="RotorRightDown"/>
+                <Button Name="RLButton" Content="{Binding Path=RLName}" FontSize="32" Background="Black" Foreground="White" HorizontalAlignment="Left" Margin="400,630,0,0" VerticalAlignment="Top" Width="100" Height="100" Click="RotorLeftTypeChange"/>
+                <Button Name="RCButton" Content="{Binding Path=RCName}" FontSize="32" Background="Black" Foreground="White" HorizontalAlignment="Left" Margin="700,630,0,0" VerticalAlignment="Top" Width="100" Height="100" Click="RotorCentreTypeChange"/>
+                <Button Name="RRButton" Content="{Binding Path=RRName}" FontSize="32" Background="Black" Foreground="White" HorizontalAlignment="Left" Margin="1000,630,0,0" VerticalAlignment="Top" Width="100" Height="100" Click="RotorRightTypeChange"/>
+            </Grid>
         </TabItem>
     </TabControl>
 </Window>
